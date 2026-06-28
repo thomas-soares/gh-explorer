@@ -1,9 +1,53 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const searchSchema = z.object({
+  username: z
+    .string()
+    .min(1, 'Informe um usuário')
+    .max(39, 'Máximo 39 caracteres')
+    .regex(/^[a-zA-Z0-9-]+$/, 'Username inválido'),
+});
+
+type SearchForm = z.infer<typeof searchSchema>;
+
+const LOCAL_STORAGE_KEY = 'github-explorer:lastSearch';
 
 export default function HomePage() {
-  const [username, setUsername] = useState('');
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<SearchForm>({
+    resolver: zodResolver(searchSchema),
+    defaultValues: { username: '' },
+  });
+
+  const usernameValue = watch('username');
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedUsername) {
+      setValue('username', storedUsername);
+    }
+  }, [setValue]);
+
+  useEffect(() => {
+    if (usernameValue !== undefined) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, usernameValue);
+    }
+  }, [usernameValue]);
+
+  const onSubmit = (data: SearchForm) => {
+    navigate(`/user/${data.username}`);
+  };
 
   return (
     <main className="mx-auto max-w-4xl p-6">
@@ -11,26 +55,28 @@ export default function HomePage() {
       <p className="mb-6 text-slate-600">
         Search for a GitHub user to view their profile and repositories.
       </p>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (username.trim()) {
-            navigate(`/user/${username.trim()}`);
-          }
-        }}
-        className="flex flex-col gap-3 sm:flex-row"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 sm:flex-row">
         <label className="sr-only" htmlFor="username">
           GitHub username
         </label>
-        <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          placeholder="Enter GitHub username"
-          className="rounded-lg border px-4 py-3 flex-1 border-slate-300 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
-        />
+        <div className="flex-1">
+          <input
+            id="username"
+            type="text"
+            placeholder="Enter GitHub username"
+            aria-invalid={errors.username ? 'true' : 'false'}
+            aria-describedby={errors.username ? 'username-error' : undefined}
+            className={`w-full rounded-lg border px-4 py-3 border-slate-300 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 ${
+              errors.username ? 'border-rose-500 ring-rose-100' : ''
+            }`}
+            {...register('username')}
+          />
+          {errors.username ? (
+            <p id="username-error" role="alert" className="mt-2 text-sm text-rose-600">
+              {errors.username.message}
+            </p>
+          ) : null}
+        </div>
         <button
           type="submit"
           className="rounded-lg bg-sky-600 px-5 py-3 text-white hover:bg-sky-700 transition"
