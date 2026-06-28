@@ -1,14 +1,27 @@
 import { useParams, Link } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useGitHubUser } from '@/hooks/useGitHubUser';
 import { useGitHubRepos } from '@/hooks/useGitHubRepos';
 import type { GitHubRepo } from '@/types/github';
+import Skeleton from '@/components/Skeleton';
+import ErrorMessage from '@/components/ErrorMessage';
+import EmptyState from '@/components/EmptyState';
 
 export default function UserPage() {
   const { username } = useParams();
   const userLogin = useMemo(() => username ?? '', [username]);
 
   const { data: user, isLoading, isError, error } = useGitHubUser(userLogin);
+
+  useEffect(() => {
+    if (user) {
+      document.title = `${user.name ?? user.login} — GH Explorer`;
+    } else if (username) {
+      document.title = `${username} — GH Explorer`;
+    } else {
+      document.title = 'GH Explorer';
+    }
+  }, [user, username]);
 
   return (
     <main className="mx-auto max-w-4xl p-6">
@@ -27,13 +40,9 @@ export default function UserPage() {
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         {isLoading ? (
-          <div className="animate-pulse">
-            <div className="h-6 w-48 bg-slate-200 rounded mb-4" />
-            <div className="h-4 w-72 bg-slate-200 rounded mb-2" />
-            <div className="h-4 w-40 bg-slate-200 rounded" />
-          </div>
+          <Skeleton rows={3} className="max-w-lg" />
         ) : isError ? (
-          <div className="text-rose-600">{(error as Error)?.message ?? 'Error loading user'}</div>
+          <ErrorMessage message={(error as Error)?.message ?? 'Error loading user'} />
         ) : user ? (
           <div className="flex flex-col md:flex-row gap-6">
             <img
@@ -54,7 +63,7 @@ export default function UserPage() {
             </div>
           </div>
         ) : (
-          <div className="text-slate-700">No user selected.</div>
+          <EmptyState message="No user selected." actionLabel="Back to home" actionTo="/" />
         )}
       </section>
       <RepoList username={userLogin} />
