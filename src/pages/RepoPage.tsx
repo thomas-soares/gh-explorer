@@ -1,13 +1,21 @@
+import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useGitHubRepo } from '@/hooks/useGitHubRepo';
 
 export default function RepoPage() {
   const { username, repoName } = useParams();
+  const fullName = useMemo(
+    () => (username && repoName ? `${username}/${repoName}` : ''),
+    [username, repoName]
+  );
+
+  const { data: repo, isLoading, isError, error } = useGitHubRepo(fullName);
 
   return (
     <main className="mx-auto max-w-4xl p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold">{repoName ?? 'Repository'}</h1>
+          <h1 className="text-3xl font-semibold">{repo?.name ?? repoName ?? 'Repository'}</h1>
           <p className="text-slate-600">Details page for repository under {username}.</p>
         </div>
         <Link
@@ -17,9 +25,84 @@ export default function RepoPage() {
           Back to user
         </Link>
       </div>
+
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-3">Repository details</h2>
-        <p className="text-slate-700">This page will display repository metadata and stats.</p>
+        {isLoading && <p className="text-slate-500">Loading repository details…</p>}
+
+        {isError && (
+          <div className="text-red-600">
+            {error?.message ?? 'Failed to load repository details.'}
+          </div>
+        )}
+
+        {repo && (
+          <div className="space-y-4">
+            <p className="text-slate-700">{repo.description}</p>
+
+            <div className="flex flex-wrap gap-3">
+              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                ⭐ Stars: {repo.stargazers_count}
+              </span>
+              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                🍴 Forks: {repo.forks_count}
+              </span>
+              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                👀 Watchers: {repo.watchers_count}
+              </span>
+              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                🐞 Open issues: {repo.open_issues_count}
+              </span>
+              {repo.language && (
+                <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                  📝 Language: {repo.language}
+                </span>
+              )}
+              {repo.license?.name && (
+                <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                  📜 License: {repo.license.name}
+                </span>
+              )}
+              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
+                🌿 Default branch: {repo.default_branch}
+              </span>
+            </div>
+
+            {repo.topics && repo.topics.length > 0 && (
+              <div>
+                <h3 className="font-medium">Topics</h3>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {repo.topics.map((t) => (
+                    <span key={t} className="rounded-full bg-slate-100 px-2 py-1 text-sm">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="pt-4">
+              {repo.homepage && (
+                <a
+                  href={repo.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mr-3 text-blue-600 hover:underline"
+                >
+                  Visit homepage
+                </a>
+              )}
+
+              <a
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              >
+                View on GitHub
+              </a>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
