@@ -28,7 +28,7 @@ export default function RepoPage() {
   }, [repo, repoName]);
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
+    <main id="main" className="mx-auto max-w-4xl p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">{repo?.name ?? repoName ?? 'Repository'}</h1>

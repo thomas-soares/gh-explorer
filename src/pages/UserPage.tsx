@@ -28,7 +28,7 @@ export default function UserPage() {
   }, [user, username]);
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
+    <main id="main" className="mx-auto max-w-4xl p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">{username ?? 'User'}</h1>
@@ -121,7 +121,9 @@ function RepoList({ username }: { username: string }) {
           <label className="text-sm text-slate-600">Sort:</label>
           <select
             value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setSortKey(e.target.value as 'stars' | 'forks' | 'name' | 'updated_at')
+            }
             className="rounded border px-2 py-1"
           >
             <option value="stars">Stars</option>

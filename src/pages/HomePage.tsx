@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { setMeta } from '@/utils/meta';
 
 const searchSchema = z.object({
   username: z
@@ -45,12 +46,17 @@ export default function HomePage() {
     }
   }, [usernameValue]);
 
+  useEffect(() => {
+    document.title = 'GitHub Explorer';
+    setMeta('description', 'Search GitHub users and view profiles and repositories');
+  }, []);
+
   const onSubmit = (data: SearchForm) => {
     navigate(`/user/${data.username}`);
   };
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
+    <main id="main" className="mx-auto max-w-4xl p-6">
       <h1 className="text-3xl font-semibold mb-4">GitHub Explorer</h1>
       <p className="mb-6 text-slate-600">
         Search for a GitHub user to view their profile and repositories.
@@ -79,7 +85,8 @@ export default function HomePage() {
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-sky-600 px-5 py-3 text-white hover:bg-sky-700 transition"
+          aria-label="Search GitHub user"
+          className="rounded-lg bg-sky-600 px-5 py-3 text-white hover:bg-sky-700 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
         >
           Search
         </button>
