@@ -6,6 +6,7 @@ import type { GitHubRepo } from '@/types/github';
 import Skeleton from '@/components/Skeleton';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
+import { setMeta } from '@/utils/meta';
 
 export default function UserPage() {
   const { username } = useParams();
@@ -16,10 +17,13 @@ export default function UserPage() {
   useEffect(() => {
     if (user) {
       document.title = `${user.name ?? user.login} — GH Explorer`;
+      setMeta('description', user.bio ?? `${user.login} GitHub profile`);
     } else if (username) {
       document.title = `${username} — GH Explorer`;
+      setMeta('description', `${username} GitHub profile`);
     } else {
       document.title = 'GH Explorer';
+      setMeta('description', 'Search GitHub users and view profiles and repositories');
     }
   }, [user, username]);
 
@@ -38,7 +42,11 @@ export default function UserPage() {
         </Link>
       </div>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section
+        className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        aria-busy={isLoading}
+        aria-live="polite"
+      >
         {isLoading ? (
           <Skeleton rows={3} className="max-w-lg" />
         ) : isError ? (
@@ -146,12 +154,16 @@ function RepoList({ username }: { username: string }) {
           {sorted.length === 0 ? (
             <div className="text-slate-700">No repositories found.</div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-3" role="list">
               {sorted.map((r) => (
-                <li key={r.id} className="p-3 border rounded hover:bg-slate-50">
-                  <a className="text-sky-600 font-medium" href={`/user/${username}/repo/${r.name}`}>
+                <li key={r.id} className="p-3 border rounded hover:bg-slate-50" role="listitem">
+                  <Link
+                    to={`/user/${username}/repo/${r.name}`}
+                    className="text-sky-600 font-medium"
+                    aria-label={`View ${r.name} repository`}
+                  >
                     {r.name}
-                  </a>
+                  </Link>
                   {r.description ? <p className="text-sm text-slate-600">{r.description}</p> : null}
                   <div className="text-xs text-slate-600 mt-2">
                     ⭐ {r.stargazers_count} • Forks: {r.forks_count} • {r.language}
@@ -166,6 +178,8 @@ function RepoList({ username }: { username: string }) {
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               className="rounded border px-3 py-1"
+              aria-label="Previous page"
+              disabled={page === 1}
             >
               Prev
             </button>
@@ -174,6 +188,7 @@ function RepoList({ username }: { username: string }) {
               type="button"
               onClick={() => setPage((p) => p + 1)}
               className="rounded border px-3 py-1"
+              aria-label="Next page"
             >
               Next
             </button>
