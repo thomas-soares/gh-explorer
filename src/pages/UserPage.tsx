@@ -72,6 +72,9 @@ export default function UserPage() {
                 <div className="px-3 py-1 rounded bg-slate-100">Followers: {user.followers}</div>
                 <div className="px-3 py-1 rounded bg-slate-100">Following: {user.following}</div>
                 <div className="px-3 py-1 rounded bg-slate-100">Repos: {user.public_repos}</div>
+                {user.email ? (
+                  <div className="px-3 py-1 rounded bg-slate-100">Email: {user.email}</div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -86,7 +89,7 @@ export default function UserPage() {
 
 function RepoList({ username }: { username: string }) {
   const [page, setPage] = useState(1);
-  const [sortKey, setSortKey] = useState<'stars' | 'forks' | 'name' | 'updated_at'>('updated_at');
+  const [sortKey, setSortKey] = useState<'stars' | 'forks' | 'name' | 'updated_at'>('stars');
   const [direction, setDirection] = useState<'asc' | 'desc'>('desc');
 
   const { data: repos, isLoading, isError, error } = useGitHubRepos(username, page);
