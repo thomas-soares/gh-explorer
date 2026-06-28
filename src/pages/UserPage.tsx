@@ -1,6 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useGitHubUser } from '@/hooks/useGitHubUser';
+import { useGitHubRepos } from '@/hooks/useGitHubRepos';
+import type { GitHubRepo } from '@/types/github';
 
 export default function UserPage() {
   const { username } = useParams();
@@ -54,6 +56,27 @@ export default function UserPage() {
         ) : (
           <div className="text-slate-700">No user selected.</div>
         )}
+      </section>
+      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-xl font-semibold">Repositories</h3>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-600">Sort:</label>
+            <select
+              value={String(0)}
+              onChange={() => {}}
+              className="rounded border px-2 py-1"
+              aria-label="Sort repositories"
+            >
+              <option value="stars">Stars</option>
+              <option value="forks">Forks</option>
+              <option value="name">Name</option>
+              <option value="updated_at">Updated</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="text-slate-700">Repository listing will appear here.</div>
       </section>
     </main>
   );
