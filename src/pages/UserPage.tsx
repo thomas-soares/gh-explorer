@@ -57,27 +57,120 @@ export default function UserPage() {
           <div className="text-slate-700">No user selected.</div>
         )}
       </section>
-      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Repositories</h3>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600">Sort:</label>
-            <select
-              value={String(0)}
-              onChange={() => {}}
-              className="rounded border px-2 py-1"
-              aria-label="Sort repositories"
-            >
-              <option value="stars">Stars</option>
-              <option value="forks">Forks</option>
-              <option value="name">Name</option>
-              <option value="updated_at">Updated</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="text-slate-700">Repository listing will appear here.</div>
-      </section>
+      <RepoList username={userLogin} />
     </main>
+  );
+}
+
+function RepoList({ username }: { username: string }) {
+  const [page, setPage] = useState(1);
+  const [sortKey, setSortKey] = useState<'stars' | 'forks' | 'name' | 'updated_at'>('updated_at');
+  const [direction, setDirection] = useState<'asc' | 'desc'>('desc');
+
+  const { data: repos, isLoading, isError, error } = useGitHubRepos(username, page);
+
+  const sorted = useMemo(() => {
+    if (!repos) return [] as GitHubRepo[];
+    const copy = [...repos];
+    switch (sortKey) {
+      case 'stars':
+        copy.sort(
+          (a, b) => (a.stargazers_count - b.stargazers_count) * (direction === 'asc' ? 1 : -1)
+        );
+        break;
+      case 'forks':
+        copy.sort((a, b) => (a.forks_count - b.forks_count) * (direction === 'asc' ? 1 : -1));
+        break;
+      case 'name':
+        copy.sort((a, b) => a.name.localeCompare(b.name) * (direction === 'asc' ? 1 : -1));
+        break;
+      case 'updated_at':
+      default:
+        copy.sort(
+          (a, b) =>
+            (new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()) *
+            (direction === 'asc' ? 1 : -1)
+        );
+        break;
+    }
+    return copy;
+  }, [repos, sortKey, direction]);
+
+  return (
+    <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-xl font-semibold">Repositories</h3>
+        <div className="ml-auto flex items-center gap-2">
+          <label className="text-sm text-slate-600">Sort:</label>
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as any)}
+            className="rounded border px-2 py-1"
+          >
+            <option value="stars">Stars</option>
+            <option value="forks">Forks</option>
+            <option value="name">Name</option>
+            <option value="updated_at">Updated</option>
+          </select>
+          <button
+            type="button"
+            onClick={() => setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            className="rounded border px-2 py-1"
+          >
+            {direction === 'asc' ? 'Asc' : 'Desc'}
+          </button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="animate-pulse">
+          <div className="h-4 bg-slate-200 rounded mb-2" />
+          <div className="h-4 bg-slate-200 rounded mb-2" />
+          <div className="h-4 bg-slate-200 rounded" />
+        </div>
+      ) : isError ? (
+        <div className="text-rose-600">
+          {(error as Error)?.message ?? 'Error loading repositories'}
+        </div>
+      ) : (
+        <>
+          {sorted.length === 0 ? (
+            <div className="text-slate-700">No repositories found.</div>
+          ) : (
+            <ul className="space-y-3">
+              {sorted.map((r) => (
+                <li key={r.id} className="p-3 border rounded hover:bg-slate-50">
+                  <a className="text-sky-600 font-medium" href={`/user/${username}/repo/${r.name}`}>
+                    {r.name}
+                  </a>
+                  {r.description ? <p className="text-sm text-slate-600">{r.description}</p> : null}
+                  <div className="text-xs text-slate-600 mt-2">
+                    ⭐ {r.stargazers_count} • Forks: {r.forks_count} • {r.language}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-4 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded border px-3 py-1"
+            >
+              Prev
+            </button>
+            <div className="text-sm text-slate-600">Page {page}</div>
+            <button
+              type="button"
+              onClick={() => setPage((p) => p + 1)}
+              className="rounded border px-3 py-1"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
+    </section>
   );
 }
