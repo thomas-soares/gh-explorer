@@ -1,77 +1,106 @@
-# React + TypeScript + Vite
+# GH Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small GitHub search explorer built with React, TypeScript and Vite.
 
-Currently, two official plugins are available:
+## Project overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This app lets a user search for a GitHub profile, view the user's details, and explore that user's repositories sorted by stars. The application also supports repository detail pages and client-side navigation.
 
-## React Compiler
+## Business requirements covered
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- Search GitHub users by username
+- View user details (followers, following, avatar, bio)
+- Display user's repositories sorted by stars
+- Navigate between repositories and view detailed repository information
+- Use environment configuration for the GitHub access token
 
-Note: This will impact Vite dev & build performances.
+## Tech stack
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript
+- Vite
+- React Router DOM
+- React Query
+- Axios
+- Tailwind CSS
+- Zod
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 18+ installed
+- `pnpm` installed globally or use `corepack pnpm`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Environment configuration
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create a `.env` file in the project root with:
 
+```env
+VITE_GITHUB_TOKEN=your_github_token_here
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### What token permissions are needed
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Only read access to public GitHub data is required.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- For a classic token: `public_repo` is enough.
+- For a fine-grained token: choose GitHub public repository read-only access.
 
+> Do not commit your token to version control.
+
+## Available commands
+
+```bash
+pnpm install
+pnpm dev
+pnpm build
+pnpm test
+pnpm preview
 ```
+
+### What each command does
+
+- `pnpm install` installs dependencies
+- `pnpm dev` starts the Vite development server
+- `pnpm build` compiles the app for production
+- `pnpm test` currently reports that no tests are configured
+- `pnpm preview` serves the production build locally
+
+## Deployment
+
+The app can be deployed to Vercel or Netlify.
+
+### Vercel / Netlify setup
+
+1. Set `VITE_GITHUB_TOKEN` as an environment variable in the platform settings.
+2. Use `pnpm install` and `pnpm build` as the build commands.
+3. Point the publish directory to `dist`.
+4. Configure rewrites / redirects so client-side routing works.
+
+#### Vercel
+
+- Use a `vercel.json` or project settings to rewrite all routes to `/index.html`.
+
+#### Netlify
+
+- Create a `_redirects` file in `public/` with:
+
+```text
+/* /index.html 200
+```
+
+## Routes to test after deploy
+
+- `/`
+- `/user/:username`
+- `/repo/:owner/:repo`
+
+Reload the pages directly in the deployed URL to confirm client-side routing works.
+
+## Demo
+
+Add your live deployment link here once the app is deployed.
+
+## Notes
+
+- The project currently does not include a full test suite because the Phase 8 test setup was removed.
+- The GitHub token is required to avoid API rate limit issues on public GitHub requests.
