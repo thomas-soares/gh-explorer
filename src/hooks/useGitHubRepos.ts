@@ -7,6 +7,5 @@ export const useGitHubRepos = (username: string, page = 1) => {
     queryKey: ['githubRepos', username, page],
     queryFn: () => getUserRepos(username, page),
     enabled: !!username,
-    keepPreviousData: true,
   });
 };

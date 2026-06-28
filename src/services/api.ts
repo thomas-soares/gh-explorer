@@ -12,9 +12,9 @@ const api = axios.create({
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (githubToken && config.headers) {
     config.headers = {
-      ...config.headers,
+      ...(config.headers as Record<string, string | undefined>),
       Authorization: `Bearer ${githubToken}`,
-    };
+    } as typeof config.headers;
   }
   return config;
 });
