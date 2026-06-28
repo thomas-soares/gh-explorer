@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useGitHubRepo } from '@/hooks/useGitHubRepo';
 import Skeleton from '@/components/Skeleton';
 import ErrorMessage from '@/components/ErrorMessage';
+import { setMeta } from '@/utils/meta';
 
 export default function RepoPage() {
   const { username, repoName } = useParams();
@@ -16,10 +17,13 @@ export default function RepoPage() {
   useEffect(() => {
     if (repo) {
       document.title = `${repo.full_name} — GH Explorer`;
+      setMeta('description', repo.description ?? `${repo.full_name} repository on GitHub`);
     } else if (repoName) {
       document.title = `${repoName} — GH Explorer`;
+      setMeta('description', `${repoName} repository on GitHub`);
     } else {
       document.title = 'Repository — GH Explorer';
+      setMeta('description', 'Repository details on GH Explorer');
     }
   }, [repo, repoName]);
 
