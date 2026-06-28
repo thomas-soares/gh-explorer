@@ -28,22 +28,26 @@ export default function RepoPage() {
   }, [repo, repoName]);
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold">{repo?.name ?? repoName ?? 'Repository'}</h1>
-          <p className="text-slate-600">Details page for repository under {username}.</p>
+    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl px-4 py-6 sm:p-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-semibold break-words">
+            {repo?.name ?? repoName ?? 'Repository'}
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600">
+            Details page for repository under <span className="font-medium">{username}</span>.
+          </p>
         </div>
         <Link
           to={`/user/${username}`}
-          className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-100"
+          className="w-full sm:w-auto text-center rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-100 transition-colors"
         >
           Back to user
         </Link>
       </div>
 
       <section
-        className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm"
         aria-live="polite"
         aria-label="Repository details"
       >
@@ -54,43 +58,48 @@ export default function RepoPage() {
         )}
 
         {repo && (
-          <div className="space-y-4">
-            <p className="text-slate-700">{repo.description}</p>
+          <div className="space-y-4 sm:space-y-6">
+            {repo.description && (
+              <p className="text-sm sm:text-base text-slate-700">{repo.description}</p>
+            )}
 
-            <div className="flex flex-wrap gap-3">
-              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                ⭐ Stars: {repo.stargazers_count}
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                ⭐ {repo.stargazers_count}
               </span>
-              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                🍴 Forks: {repo.forks_count}
+              <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                🍴 {repo.forks_count}
               </span>
-              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                👀 Watchers: {repo.watchers_count}
+              <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                👀 {repo.watchers_count}
               </span>
-              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                🐞 Open issues: {repo.open_issues_count}
+              <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                🐞 {repo.open_issues_count}
               </span>
               {repo.language && (
-                <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                  📝 Language: {repo.language}
+                <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                  📝 {repo.language}
                 </span>
               )}
               {repo.license?.name && (
-                <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                  📜 License: {repo.license.name}
+                <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                  📜 {repo.license.name}
                 </span>
               )}
-              <span className="rounded-md bg-slate-100 px-3 py-1 text-sm">
-                🌿 Default branch: {repo.default_branch}
+              <span className="rounded-md bg-slate-100 px-2 sm:px-3 py-1 text-xs sm:text-sm">
+                🌿 {repo.default_branch}
               </span>
             </div>
 
             {repo.topics && repo.topics.length > 0 && (
               <div>
-                <h3 className="font-medium">Topics</h3>
+                <h3 className="font-medium text-sm sm:text-base">Topics</h3>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {repo.topics.map((t) => (
-                    <span key={t} className="rounded-full bg-slate-100 px-2 py-1 text-sm">
+                    <span
+                      key={t}
+                      className="rounded-full bg-slate-100 px-2 py-1 text-xs sm:text-sm"
+                    >
                       {t}
                     </span>
                   ))}
