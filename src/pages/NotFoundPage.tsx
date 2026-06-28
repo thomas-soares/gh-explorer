@@ -9,7 +9,7 @@ export default function NotFoundPage() {
   }, []);
 
   return (
-    <main id="main" className="mx-auto max-w-4xl p-6 text-center">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-6 text-center">
       <h1 className="text-4xl font-semibold mb-4">404 — Page not found</h1>
       <p className="mb-6 text-slate-600">The page you are looking for does not exist.</p>
       <Link

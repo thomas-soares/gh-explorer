@@ -56,7 +56,7 @@ export default function HomePage() {
   };
 
   return (
-    <main id="main" className="mx-auto max-w-4xl p-6">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-6">
       <h1 className="text-3xl font-semibold mb-4">GitHub Explorer</h1>
       <p className="mb-6 text-slate-600">
         Search for a GitHub user to view their profile and repositories.

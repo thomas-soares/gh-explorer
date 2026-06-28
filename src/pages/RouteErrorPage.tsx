@@ -18,8 +18,11 @@ export default function RouteErrorPage() {
   }, []);
 
   return (
-    <main id="main" className="mx-auto max-w-4xl p-6">
-      <div className="rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-6">
+      <div
+        className="rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center"
+        aria-live="polite"
+      >
         <h1 className="text-4xl font-semibold text-rose-700 mb-4">Something went wrong</h1>
         <p className="mb-4 text-slate-700">{message}</p>
         <Link

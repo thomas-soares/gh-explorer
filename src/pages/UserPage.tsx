@@ -28,7 +28,7 @@ export default function UserPage() {
   }, [user, username]);
 
   return (
-    <main id="main" className="mx-auto max-w-4xl p-6">
+    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold">{username ?? 'User'}</h1>
@@ -46,6 +46,7 @@ export default function UserPage() {
         className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
         aria-busy={isLoading}
         aria-live="polite"
+        aria-label="GitHub user profile"
       >
         {isLoading ? (
           <Skeleton rows={3} className="max-w-lg" />
@@ -87,8 +88,10 @@ function RepoList({ username }: { username: string }) {
   const { data: repos, isLoading, isError, error } = useGitHubRepos(username, page);
 
   const sorted = useMemo(() => {
-    if (!repos) return [] as GitHubRepo[];
-    const copy = [...repos];
+    if (!repos) return [];
+    const reposArray = (repos as GitHubRepo[]) || [];
+    if (reposArray.length === 0) return [];
+    const copy: GitHubRepo[] = [...reposArray];
     switch (sortKey) {
       case 'stars':
         copy.sort(
@@ -118,13 +121,17 @@ function RepoList({ username }: { username: string }) {
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-xl font-semibold">Repositories</h3>
         <div className="ml-auto flex items-center gap-2">
-          <label className="text-sm text-slate-600">Sort:</label>
+          <label htmlFor="sort-key" className="text-sm text-slate-600">
+            Sort:
+          </label>
           <select
+            id="sort-key"
             value={sortKey}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setSortKey(e.target.value as 'stars' | 'forks' | 'name' | 'updated_at')
             }
             className="rounded border px-2 py-1"
+            aria-label="Sort repositories"
           >
             <option value="stars">Stars</option>
             <option value="forks">Forks</option>
@@ -154,7 +161,9 @@ function RepoList({ username }: { username: string }) {
       ) : (
         <>
           {sorted.length === 0 ? (
-            <div className="text-slate-700">No repositories found.</div>
+            <div className="text-slate-700" role="status" aria-live="polite">
+              No repositories found.
+            </div>
           ) : (
             <ul className="space-y-3" role="list">
               {sorted.map((r) => (
