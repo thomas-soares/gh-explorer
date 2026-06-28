@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
 const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
 
@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (githubToken && config.headers) {
     config.headers = {
       ...config.headers,

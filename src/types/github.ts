@@ -33,8 +33,11 @@ export interface GitHubRepo {
   description?: string | null;
   stargazers_count: number;
   forks_count: number;
+  watchers_count: number;
   language?: string | null;
+  topics?: string[];
   updated_at: string;
+  open_issues_count: number;
   private: boolean;
   archived: boolean;
   fork: boolean;

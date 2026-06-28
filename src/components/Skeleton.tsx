@@ -1,5 +1,3 @@
-import React from 'react';
-
 type SkeletonProps = {
   rows?: number;
   className?: string;
