@@ -102,5 +102,5 @@ Add your live deployment link here once the app is deployed.
 
 ## Notes
 
-- The project currently does not include a full test suite because the Phase 8 test setup was removed.
+- The project currently includes a minimal test suite with Vitest covering a couple of components.
 - The GitHub token is required to avoid API rate limit issues on public GitHub requests.
