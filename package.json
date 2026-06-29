@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -p tsconfig.build.json && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ci": "vitest run --run",
     "lint": "eslint .",
     "format": "prettier --write .",
     "preview": "vite preview"
