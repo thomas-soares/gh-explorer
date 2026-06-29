@@ -98,7 +98,7 @@ Reload the pages directly in the deployed URL to confirm client-side routing wor
 
 ## Demo
 
-Add your live deployment link here once the app is deployed.
+[https://gh-explorer-ruddy.vercel.app/](https://gh-explorer-ruddy.vercel.app/)
 
 ## Notes
 
